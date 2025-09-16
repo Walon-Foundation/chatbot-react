@@ -40,7 +40,16 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Walon-Foundation/chatbot-react"
+  },
+  "homepage": "https://github.com/your-username/chatbotly-react#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/chatbotly-react/issues"
+  },
   "publishConfig": {
+    "access": "public",
     "registry": "https://npm.pkg.github.com/Walon-Foundation"
   }
 }
