@@ -47,9 +47,5 @@
   "homepage": "https://github.com/your-username/chatbotly-react#readme",
   "bugs": {
     "url": "https://github.com/your-username/chatbotly-react/issues"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://npm.pkg.github.com/"
   }
 }
