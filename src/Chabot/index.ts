@@ -1,2 +1,2 @@
 export  { Chatbot } from "./Chatbot"
-export type { ChatbotProp} from "./Chatbot"
+export type { ChatbotProps, ChatMessage, User} from "./Chatbot"

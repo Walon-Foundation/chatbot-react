@@ -1,7 +1,7 @@
 {
   "name": "@chatbotly/react",
   "version": "0.1.0",
-  "description": "",
+  "description": "A simple react component that enables user to add chatbot with little setup",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
@@ -11,7 +11,11 @@
   "scripts": {
     "rollup": "rollup -c"
   },
-  "keywords": [],
+  "keywords": [
+    "chatbot",
+    "react",
+    "component"
+  ],
   "author": "Walon-Foundation",
   "license": "MIT",
   "packageManager": "pnpm@10.15.1",
@@ -35,5 +39,8 @@
   "peerDependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/Walon-Foundation"
   }
 }
