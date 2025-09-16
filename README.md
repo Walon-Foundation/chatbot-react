@@ -21,9 +21,9 @@ A **lightweight, customizable Chatbot component** for React and Next.js apps. Al
 ## 📦 Installation
 
 ```bash
-npm install @chatbotly/react
+npm install chatbotly-react
 # or
-yarn add @chatbotly/react
+yarn add chatbotly-react
 ```
 
 > **Peer dependencies:** React and ReactDOM.
@@ -36,7 +36,7 @@ yarn add @chatbotly/react
 
 ```tsx
 import React from "react";
-import { Chatbot } from "@chatbotly/react";
+import { Chatbot } from "@chatbotly-react";
 
 export default function App() {
   return (
