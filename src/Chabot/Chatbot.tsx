@@ -20,7 +20,7 @@ export interface ChatbotProps {
   user: User;
   chatbotId: string;
   apiKey: string;
-  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  position?: 'center' | 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   onSaveMessage?: (messageData: { question: string; answer: string; userId: string }) => void;
   initialMessages?: ChatMessage[];
   primaryColor?: string;
@@ -36,7 +36,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({
   user,
   chatbotId,
   apiKey,
-  position = 'bottom-right',
+  position = 'center',
   onSaveMessage,
   initialMessages = [],
   primaryColor = '#6366f1',
@@ -51,7 +51,6 @@ export const Chatbot: React.FC<ChatbotProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,7 +60,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isMinimized]);
+  }, [messages]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -85,7 +84,6 @@ export const Chatbot: React.FC<ChatbotProps> = ({
     setIsLoading(true);
 
     try {
-      // Real API call to production endpoint
       const res = await fetch(`${apiEndpoint}?Botid=${chatbotId}`, {
         method: "POST",
         headers: {
@@ -99,13 +97,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({
         })
       });
 
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status} ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
 
       const data = await res.json();
-      
-      // Extract answer from the response (assuming response contains both question and answer)
       const botResponse = data.answer || "Thank you for your message. How can I assist you further?";
 
       const botMessage: ChatMessage = {
@@ -118,11 +112,10 @@ export const Chatbot: React.FC<ChatbotProps> = ({
 
       setMessages(prev => [...prev, botMessage]);
 
-      // Save to user's database if callback provided
       if (onSaveMessage) {
         onSaveMessage({
-          question: inputMessage.trim(), // User's original question
-          answer: botResponse,           // Bot's response from API
+          question: inputMessage.trim(),
+          answer: botResponse,
           userId: user.id,
         });
       }
@@ -156,116 +149,10 @@ export const Chatbot: React.FC<ChatbotProps> = ({
   };
 
   const toggleChat = () => setIsOpen(!isOpen);
-  const minimizeChat = () => setIsMinimized(true);
-  const maximizeChat = () => setIsMinimized(false);
 
   return (
-    <div className={`chatbot-container chatbot-${position}`}>
-      {isOpen && (
-        <div className="chatbot-window" style={{ 
-          '--primary-color': primaryColor,
-          '--secondary-color': secondaryColor,
-        } as React.CSSProperties}>
-          <div className="chatbot-header">
-            <div className="header-content">
-              <div className="bot-avatar">{botAvatar}</div>
-              <div className="header-text">
-                <h3 className="chatbot-title">{title}</h3>
-                <span className="status-text">Online • Ready to help</span>
-              </div>
-            </div>
-            <div className="header-actions">
-              <button
-                className="header-button minimize-btn"
-                onClick={minimizeChat}
-                aria-label="Minimize chat"
-              >
-                −
-              </button>
-              <button
-                className="header-button close-btn"
-                onClick={toggleChat}
-                aria-label="Close chat"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-
-          {!isMinimized && (
-            <>
-              <div className="chatbot-messages">
-                {messages.length === 0 && (
-                  <div className="welcome-message">
-                    <div className="welcome-avatar">✨</div>
-                    <div className="welcome-text">
-                      <p>Hello {user.name}! 👋</p>
-                      <p>{welcomeMessage}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`message ${message.type}`}
-                  >
-                    <div className="message-avatar">
-                      {message.avatar}
-                    </div>
-                    <div className="message-content">
-                      <p>{message.message}</p>
-                      <span className="message-time">
-                        {formatTime(message.timestamp)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                
-                {isLoading && (
-                  <div className="message bot">
-                    <div className="message-avatar">
-                      {botAvatar}
-                    </div>
-                    <div className="message-content">
-                      <div className="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                <div ref={messagesEndRef} />
-              </div>
-
-              <div className="chatbot-input">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your message..."
-                  disabled={isLoading}
-                  className="input-field"
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isLoading}
-                  className="send-button"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z"/>
-                  </svg>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
+    <>
+      {/* Floating Chat Button */}
       <button
         className="chatbot-toggle"
         onClick={toggleChat}
@@ -285,6 +172,105 @@ export const Chatbot: React.FC<ChatbotProps> = ({
           <span className="message-badge">{messages.length}</span>
         )}
       </button>
-    </div>
+
+      {/* Modal Overlay */}
+      {isOpen && (
+        <div className="chatbot-overlay" onClick={toggleChat}>
+          <div 
+            className={`chatbot-modal chatbot-${position}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              '--primary-color': primaryColor,
+              '--secondary-color': secondaryColor,
+            } as React.CSSProperties}
+          >
+            <div className="chatbot-header">
+              <div className="header-content">
+                <div className="bot-avatar">{botAvatar}</div>
+                <div className="header-text">
+                  <h3 className="chatbot-title">{title}</h3>
+                  <span className="status-text">Online • Ready to help</span>
+                </div>
+              </div>
+              <button
+                className="close-button"
+                onClick={toggleChat}
+                aria-label="Close chat"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="chatbot-messages">
+              {messages.length === 0 && (
+                <div className="welcome-message">
+                  <div className="welcome-avatar">✨</div>
+                  <div className="welcome-text">
+                    <p>Hello {user.name}! 👋</p>
+                    <p>{welcomeMessage}</p>
+                  </div>
+                </div>
+              )}
+              
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`message ${message.type}`}
+                >
+                  <div className="message-avatar">
+                    {message.avatar}
+                  </div>
+                  <div className="message-content">
+                    <p>{message.message}</p>
+                    <span className="message-time">
+                      {formatTime(message.timestamp)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              
+              {isLoading && (
+                <div className="message bot">
+                  <div className="message-avatar">
+                    {botAvatar}
+                  </div>
+                  <div className="message-content">
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="chatbot-input">
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                disabled={isLoading}
+                className="input-field"
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="send-button"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
