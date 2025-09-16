@@ -1,6 +1,6 @@
 {
   "name": "chatbotly-react",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A simple react component that enables user to add chatbot with little setup",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
