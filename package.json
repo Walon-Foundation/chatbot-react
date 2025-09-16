@@ -50,6 +50,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com/Walon-Foundation"
+    "registry": "https://npm.pkg.github.com/"
   }
 }
